@@ -1,4 +1,5 @@
-﻿using Uno.UI.DataBinding;
+﻿#nullable enable
+using Uno.UI.DataBinding;
 using Windows.UI.Xaml;
 using System;
 using System.Collections.Generic;
@@ -11,14 +12,14 @@ namespace Uno.UI.DataBinding
 	/// </summary>
     internal class BindablePropertyDescriptor
     {
-		private BindablePropertyDescriptor(IBindableType ownerType, IBindableProperty property)
+		private BindablePropertyDescriptor(IBindableType? ownerType, IBindableProperty? property)
 		{
 			OwnerType = ownerType;
 			Property = property;
 		}
 
-		public IBindableType OwnerType { get; }
-		public IBindableProperty Property { get; private set; }
+		public IBindableType? OwnerType { get; }
+		public IBindableProperty? Property { get; private set; }
 
 		/// <summary>
 		/// Gets a bindable type and its property.
@@ -26,9 +27,9 @@ namespace Uno.UI.DataBinding
 		/// <param name="originalType">The type in which to look for the property</param>
 		/// <param name="property">The property name, or the attached property name.</param>
 		/// <returns>A bindable type descriptor.</returns>
-		internal static BindablePropertyDescriptor GetPropertByBindableMetadataProvider(Type originalType, string property)
+		internal static BindablePropertyDescriptor? GetPropertByBindableMetadataProvider(Type originalType, string property)
 		{
-			var bindableType = BindingPropertyHelper.BindableMetadataProvider.GetBindableTypeByType(originalType);
+			var bindableType = BindingPropertyHelper.BindableMetadataProvider?.GetBindableTypeByType(originalType);
 
 			if (bindableType != null)
 			{
@@ -44,7 +45,7 @@ namespace Uno.UI.DataBinding
 
 					if (dpDescriptor != null)
 					{
-						bindableType = BindingPropertyHelper.BindableMetadataProvider.GetBindableTypeByType(dpDescriptor.OwnerType);
+						bindableType = BindingPropertyHelper.BindableMetadataProvider?.GetBindableTypeByType(dpDescriptor.OwnerType);
 
 						if (bindableType != null)
 						{

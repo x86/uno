@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,9 @@ namespace Windows.UI.Xaml
 	internal class DependencyPropertyDetails : IEnumerable<object>, IEnumerable, IDisposable
 	{
 		private DependencyPropertyValuePrecedences _highestPrecedence = DependencyPropertyValuePrecedences.DefaultValue;
-		private BindingExpression _lastBindings;
-		private static readonly ArrayPool<object> _pool = ArrayPool<object>.Create(100, 100);
-		private readonly object[] _stack;
+		private BindingExpression? _lastBindings;
+		private static readonly ArrayPool<object?> _pool = ArrayPool<object?>.Create(100, 100);
+		private readonly object?[] _stack;
 		private readonly bool _hasWeakStorage;
 		private readonly List<BindingExpression> _bindings = new List<BindingExpression>();
 
@@ -32,11 +33,6 @@ namespace Windows.UI.Xaml
 			{
 				_unsetStack[i] = DependencyProperty.UnsetValue;
 			}
-		}
-
-        private DependencyPropertyDetails()
-		{
-			_stack = _pool.Rent(_stackLength);
 		}
 
 		public void Dispose()
@@ -54,11 +50,12 @@ namespace Windows.UI.Xaml
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="defaultValue">The default value of the Dependency Property</param>
-		internal DependencyPropertyDetails(DependencyProperty property, Type dependencyObjectType) : this()
+		internal DependencyPropertyDetails(DependencyProperty property, Type dependencyObjectType)
 		{
             Property = property;
 			_hasWeakStorage = property.HasWeakStorage;
+
+			_stack = _pool.Rent(_stackLength);
 
 			Array.Copy(_unsetStack, _stack, _stackLength);
 
@@ -73,6 +70,7 @@ namespace Windows.UI.Xaml
 			_stack[MaxIndex] = defaultValue;
 
 			Metadata = property.GetMetadata(dependencyObjectType);
+
 		}
 
 		/// <summary>
@@ -114,7 +112,7 @@ namespace Windows.UI.Xaml
 			}
 		}
 
-		internal BindingExpression GetLastBinding()
+		internal BindingExpression? GetLastBinding()
 			=> _lastBindings;
 
 		internal void SetBinding(BindingExpression bindingExpression)
@@ -135,7 +133,7 @@ namespace Windows.UI.Xaml
 		/// Gets the value at the current highest precedence level
 		/// </summary>
 		/// <returns>The value at the current highest precedence level</returns>
-		internal object GetValue()
+		internal object? GetValue()
 			=> GetValue(_highestPrecedence);
 
 		/// <summary>
@@ -144,7 +142,7 @@ namespace Windows.UI.Xaml
 		/// <param name="precedence">The precedence level to get the value at</param>
 		/// <returns>The value at a given precedence level</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal object GetValue(DependencyPropertyValuePrecedences precedence)
+		internal object? GetValue(DependencyPropertyValuePrecedences precedence)
 			=> Unwrap(_stack[(int)precedence]);
 
 		/// <summary>
@@ -154,12 +152,12 @@ namespace Windows.UI.Xaml
 		/// </summary>
 		/// <param name="precedence">The value precedence under which to fetch a value</param>
 		/// <returns>The value at the highest precedence level under the specified one</returns>
-		internal (object value, DependencyPropertyValuePrecedences precedence) GetValueUnderPrecedence(DependencyPropertyValuePrecedences precedence)
+		internal (object? value, DependencyPropertyValuePrecedences precedence) GetValueUnderPrecedence(DependencyPropertyValuePrecedences precedence)
 		{
 			// Start from current precedence and find next highest
 			for (int i = (int)precedence + 1; i < (int)DependencyPropertyValuePrecedences.DefaultValue; i++)
 			{
-				object value = Unwrap(_stack[i]);
+				var value = Unwrap(_stack[i]);
 
 				if (value != DependencyProperty.UnsetValue)
 				{
@@ -181,21 +179,19 @@ namespace Windows.UI.Xaml
 		/// </summary>
 		/// <param name="value">value to validate</param>
 		/// <returns>The value if valid, otherwise the dependency property's default value.</returns>
-		private object Validate(object value)
-		{
-			return value == null && !Property.IsTypeNullable
+		private object? Validate(object? value) =>
+			value == null && !Property.IsTypeNullable
 				? _stack[(int)DependencyPropertyValuePrecedences.DefaultValue]
 				: Wrap(value);
-		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private object Wrap(object value)
+		private object? Wrap(object? value)
 			=> _hasWeakStorage && value != null && value != DependencyProperty.UnsetValue
 			? WeakReferencePool.RentWeakReference(this, value)
 			: value;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private object Unwrap(object value)
+		private object? Unwrap(object? value)
 			=> _hasWeakStorage && value is ManagedWeakReference mwr
 			? mwr.Target
 			: value;

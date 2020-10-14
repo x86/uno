@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace Windows.UI.Xaml.Data
 		private readonly ManagedWeakReference _view;
 		private readonly Type _targetOwnerType;
 
-		private ManagedWeakReference _dataContext;
+		private ManagedWeakReference? _dataContext;
 		private SerialDisposable _subscription = new SerialDisposable();
 
 		private BindingPath _bindingPath;
@@ -50,17 +51,17 @@ namespace Windows.UI.Xaml.Data
 
 		internal DependencyPropertyDetails TargetPropertyDetails { get; }
 
-		private object ExplicitSource
+		private object? ExplicitSource
 		{
 			get => _explicitSourceStore?.Target;
 			set => _explicitSourceStore = WeakReferencePool.RentWeakReference(this, value);
 		}
 
-		private BindingPath[] _updateSources = null;
+		private BindingPath[]? _updateSources = null;
 
 		public string TargetName => TargetPropertyDetails.Property.Name;
 
-		public object DataContext
+		public object? DataContext
 		{
 			get => _isElementNameSource || ExplicitSource != null ? ExplicitSource : _dataContext?.Target;
 			set
@@ -145,7 +146,7 @@ namespace Windows.UI.Xaml.Data
 			ApplyElementName();
 		}
 
-		private ManagedWeakReference GetWeakDataContext()
+		private ManagedWeakReference? GetWeakDataContext()
 			=> _isElementNameSource || (_explicitSourceStore?.IsAlive ?? false) ? _explicitSourceStore : _dataContext;
 
 		/// <summary>
@@ -399,7 +400,7 @@ namespace Windows.UI.Xaml.Data
 			}
 		}
 
-		private bool TryGetTargetValue(out object value)
+		private bool TryGetTargetValue(out object? value)
 		{
 			var viewTarget = _view.Target;
 
@@ -558,14 +559,14 @@ namespace Windows.UI.Xaml.Data
 			SetTargetValueSafe(v, useTargetNullValue: true);
 		}
 
-		private void SetTargetValueSafe(object v, bool useTargetNullValue)
+		private void SetTargetValueSafe(object? v, bool useTargetNullValue)
 		{
 			if (this.Log().IsEnabled(Microsoft.Extensions.Logging.LogLevel.Debug))
 			{
 				this.Log().DebugFormat(
 					"{0}.SetTargetValueSafe({1}) (p:{2}, h:{3:X8})",
 					_view.Target?.GetType() ?? typeof(object),
-					v.SelectOrDefault(vv => vv.ToString(), "[null]"),
+					v?.ToString() ?? "[null]",
 					_bindingPath.Path,
 					_view.Target?.GetHashCode()
 				);
@@ -612,7 +613,7 @@ namespace Windows.UI.Xaml.Data
 		private string GetCurrentCulture() => CultureInfo.CurrentCulture.ToString();
 
 
-		private object ConvertValue(object value)
+		private object? ConvertValue(object? value)
 		{
 			if (ParentBinding.Converter != null)
 			{
@@ -624,7 +625,7 @@ namespace Windows.UI.Xaml.Data
 			}
 		}
 
-		private object ConvertToBoundPropertyType(object value)
+		private object ConvertToBoundPropertyType(object? value)
 		{
 			// _boundPropertyType can be null for properties not bound for the actual instance (no matching properties found)
 			// Can be used for "multi-binding" / inheritance.

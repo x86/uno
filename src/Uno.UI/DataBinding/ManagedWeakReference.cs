@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -31,12 +32,12 @@ namespace Uno.UI.DataBinding
 		/// <summary>
 		/// Provides the owner of the reference, which requested the current <see cref="WeakReference"/>
 		/// </summary>
-		public object Owner => _ownerHandle?.Target;
+		public object? Owner => _ownerHandle?.Target;
 
 		/// <summary>
 		/// The managed weak reference
 		/// </summary>
-		public object Target
+		public object? Target
 		{
 			get
 			{
@@ -125,7 +126,7 @@ namespace Uno.UI.DataBinding
 		/// <summary>
 		/// Check if the target is a managed peer whose underlying native object has been collected.
 		/// </summary>
-		private static bool IsNativeAlive(object obj)
+		private static bool IsNativeAlive(object? obj)
 		{
 			if (obj is INativeObject nativeObj)
 			{

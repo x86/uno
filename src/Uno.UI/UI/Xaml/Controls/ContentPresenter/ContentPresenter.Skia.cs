@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Drawing;
 using Uno.Extensions;
 using Uno.UI;
@@ -33,9 +34,9 @@ namespace Windows.UI.Xaml.Controls
 			UpdateContentTemplateRoot();
 		}
 
-		partial void RegisterContentTemplateRoot()
+		partial void RegisterContentTemplateRoot(UIElement contentTemplateRoot)
 		{
-			AddChild(ContentTemplateRoot);
+			AddChild(contentTemplateRoot);
 		}
 
 		partial void UnregisterContentTemplateRoot()

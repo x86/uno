@@ -1,4 +1,5 @@
-﻿using Android.Views;
+﻿#nullable enable
+using Android.Views;
 using Android.Widget;
 using Uno.Logging;
 using Uno.Extensions;
@@ -44,16 +45,16 @@ namespace Windows.UI.Xaml.Controls
 			RequestLayout();
 		}
 
-		partial void RegisterContentTemplateRoot()
+		partial void RegisterContentTemplateRoot(View contentTemplateRoot)
 		{
 			//This validation is present in order to remove the child from its parent if it already has a parent.
 			//This prevents an exception for an InvalidState when we try to set a new template.
-			if (ContentTemplateRoot.Parent != null)
+			if (contentTemplateRoot.Parent != null)
 			{
-				(ContentTemplateRoot.Parent as ViewGroup)?.RemoveView(ContentTemplateRoot);
+				(contentTemplateRoot.Parent as ViewGroup)?.RemoveView(contentTemplateRoot);
 			}
 
-			AddView(ContentTemplateRoot);
+			AddView(contentTemplateRoot);
 		}
 
 		partial void UnregisterContentTemplateRoot()

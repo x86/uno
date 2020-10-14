@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,24 +30,24 @@ namespace Windows.UI.Xaml
 		private static Dictionary<Type, Dictionary<string, DependencyProperty>> _registry
 			= new Dictionary<Type, Dictionary<string, DependencyProperty>>(Uno.Core.Comparison.FastTypeComparer.Default);
 
-		private readonly static Dictionary<Type, DependencyProperty[]> _getPropertiesForType = new Dictionary<Type, DependencyProperty[]>(Uno.Core.Comparison.FastTypeComparer.Default);
-		private readonly static Dictionary<PropertyCacheEntry, DependencyProperty> _getPropertyCache = new Dictionary<PropertyCacheEntry, DependencyProperty>(PropertyCacheEntry.DefaultComparer);
+		private static readonly Dictionary<Type, DependencyProperty[]> _getPropertiesForType = new Dictionary<Type, DependencyProperty[]>(Uno.Core.Comparison.FastTypeComparer.Default);
+		private static readonly Dictionary<PropertyCacheEntry, DependencyProperty?> _getPropertyCache = new Dictionary<PropertyCacheEntry, DependencyProperty?>(PropertyCacheEntry.DefaultComparer);
 
-		private readonly static Dictionary<CachedTuple<Type, FrameworkPropertyMetadataOptions>, DependencyProperty[]> _getFrameworkPropertiesForType = new Dictionary<CachedTuple<Type, FrameworkPropertyMetadataOptions>, DependencyProperty[]>(CachedTuple<Type, FrameworkPropertyMetadataOptions>.Comparer);
-		private readonly static Dictionary<Type, DependencyProperty[]> _getDependencyObjectPropertiesForType = new Dictionary<Type, DependencyProperty[]>(Uno.Core.Comparison.FastTypeComparer.Default);
+		private static readonly Dictionary<CachedTuple<Type, FrameworkPropertyMetadataOptions>, DependencyProperty[]> _getFrameworkPropertiesForType = new Dictionary<CachedTuple<Type, FrameworkPropertyMetadataOptions>, DependencyProperty[]>(CachedTuple<Type, FrameworkPropertyMetadataOptions>.Comparer);
+		private static readonly Dictionary<Type, DependencyProperty[]> _getDependencyObjectPropertiesForType = new Dictionary<Type, DependencyProperty[]>(Uno.Core.Comparison.FastTypeComparer.Default);
 
 		private readonly PropertyMetadata _ownerTypeMetadata; // For perf consideration, we keep direct ref the metadata for the owner type
 		private readonly Dictionary<Type, PropertyMetadata> _metadata = new Dictionary<Type, PropertyMetadata>(Uno.Core.Comparison.FastTypeComparer.Default);
 
-		private string _name;
-		private Type _propertyType;
-		private Type _ownerType;
+		private readonly string _name;
+		private readonly Type _propertyType;
+		private readonly Type _ownerType;
 		private readonly bool _isAttached;
 		private readonly bool _isTypeNullable;
 		private readonly int _uniqueId;
 		private readonly bool _isDependencyObjectCollection;
 		private readonly bool _hasWeakStorage;
-		private object _fallbackDefaultValue;
+		private object? _fallbackDefaultValue;
 
 		private static int _globalId;
 
@@ -160,14 +161,14 @@ namespace Windows.UI.Xaml
 		/// </summary>
 		/// <param name="forType">The name of the specific type from which to retrieve the dependency property metadata, as a type reference</param>
 		/// <returns>A property metadata object.</returns>
-		public PropertyMetadata GetMetadata(Type forType)
+		public PropertyMetadata GetMetadata(Type? forType)
 		{
 			if (forType == _ownerType)
 			{
 				return _ownerTypeMetadata;
 			}
 
-			PropertyMetadata metadata = null;
+			PropertyMetadata? metadata = null;
 			if (!_metadata.TryGetValue(forType, out metadata))
 			{
 				if (
@@ -236,31 +237,19 @@ namespace Windows.UI.Xaml
 			_metadata.Add(forType, typeMetadata);
 		}
 
-		internal Type OwnerType
-		{
-			get { return _ownerType; }
-		}
+		internal Type OwnerType => _ownerType;
 
-		internal Type Type
-		{
-			get { return _propertyType; }
-		}
+		internal Type Type => _propertyType;
 
 		/// <summary>
 		/// Determines if the Type of the property is a ValueType
 		/// </summary>
-		internal bool IsTypeNullable
-		{
-			get { return _isTypeNullable; }
-		}
+		internal bool IsTypeNullable => _isTypeNullable;
 
 		internal object GetFallbackDefaultValue()
 			=> _fallbackDefaultValue != null ? _fallbackDefaultValue : _fallbackDefaultValue = Activator.CreateInstance(Type);
 
-		internal string Name
-		{
-			get { return _name; }
-		}
+		internal string Name => _name;
 
 		internal bool IsAttached { get { return _isAttached; } }
 
@@ -270,12 +259,15 @@ namespace Windows.UI.Xaml
 		/// <param name="type">The type that owns the dependency property</param>
 		/// <param name="name">The name of the dependency property</param>
 		/// <returns>A <see cref="DependencyProperty"/> instance, otherwise null it not found.</returns>
-		internal static DependencyProperty GetProperty(Type type, string name)
+		internal static DependencyProperty? GetProperty(Type type, string? name)
 		{
-			DependencyProperty result = null;
+			if (name == null)
+			{
+				return null;
+			}
 			var key = new PropertyCacheEntry(type, name);
 
-			if (!_getPropertyCache.TryGetValue(key, out result))
+			if (!_getPropertyCache.TryGetValue(key, out var result))
 			{
 				_getPropertyCache.Add(key, result = InternalGetProperty(type, name));
 			}
@@ -291,11 +283,13 @@ namespace Windows.UI.Xaml
 			}
 		}
 
-		private static DependencyProperty InternalGetProperty(Type type, string name)
+		private static DependencyProperty? InternalGetProperty(Type type, string? name)
 		{
+			if (name == null)
+			{
+				return null;
+			}
 			ForceInitializeTypeConstructor(type);
-
-			DependencyProperty result = null;
 
 			var propertyInfo = DependencyPropertyDescriptor.Parse(name);
 
@@ -305,13 +299,15 @@ namespace Windows.UI.Xaml
 				name = propertyInfo.Name;
 			}
 
+			var t = type;
+
 			do
 			{
-				var properties = _registry.UnoGetValueOrDefault(type);
+				var properties = _registry.UnoGetValueOrDefault(t);
 
 				if (properties != null)
 				{
-					result = properties.UnoGetValueOrDefault(name);
+					var result = properties.UnoGetValueOrDefault(name);
 
 					if (result != null)
 					{
@@ -320,11 +316,11 @@ namespace Windows.UI.Xaml
 				}
 
 				// Dependency properties are inherited
-				type = type.BaseType;
+				t = t.BaseType;
 			}
-			while (type != typeof(object) && type != null);
+			while (t != typeof(object) && t != null);
 
-			return result;
+			return null;
 		}
 
 		/// <summary>
@@ -334,9 +330,7 @@ namespace Windows.UI.Xaml
 		/// <returns>An array of Dependency Properties.</returns>
 		internal static DependencyProperty[] GetPropertiesForType(Type type)
 		{
-			DependencyProperty[] result = null;
-
-			if (!_getPropertiesForType.TryGetValue(type, out result))
+			if (!_getPropertiesForType.TryGetValue(type, out var result))
 			{
 				_getPropertiesForType.Add(type, result = InternalGetPropertiesForType(type));
 			}
@@ -352,10 +346,9 @@ namespace Windows.UI.Xaml
 		/// <returns>An array of Dependency Properties.</returns>
 		internal static DependencyProperty[] GetFrameworkPropertiesForType(Type type, FrameworkPropertyMetadataOptions options)
 		{
-			DependencyProperty[] result = null;
 			var key = CachedTuple.Create(type, options);
 
-			if (!_getFrameworkPropertiesForType.TryGetValue(key, out result))
+			if (!_getFrameworkPropertiesForType.TryGetValue(key, out var result))
 			{
 				_getFrameworkPropertiesForType.Add(key, result = InternalGetFrameworkPropertiesForType(type, options));
 			}
@@ -370,9 +363,7 @@ namespace Windows.UI.Xaml
 		/// <returns>An array of Dependency Properties.</returns>
 		internal static DependencyProperty[] GetDependencyObjectPropertiesForType(Type type)
 		{
-			DependencyProperty[] result = null;
-
-			if (!_getDependencyObjectPropertiesForType.TryGetValue(type, out result))
+			if (!_getDependencyObjectPropertiesForType.TryGetValue(type, out var result))
 			{
 				_getDependencyObjectPropertiesForType.Add(type, result = InternalGetDependencyObjectPropertiesForType(type));
 			}

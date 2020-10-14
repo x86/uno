@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Drawing;
 using AppKit;
 using Uno.Extensions;
@@ -32,16 +33,16 @@ namespace Windows.UI.Xaml.Controls
 			this.InvalidateMeasure();
 		}
 
-		partial void RegisterContentTemplateRoot()
+		partial void RegisterContentTemplateRoot(NSView contentTemplateRoot)
 		{
 			if (Subviews.Length != 0)
 			{
 				throw new Exception("A Xaml control may not contain more than one child.");
 			}
-			 
-			ContentTemplateRoot.Frame = Bounds;
-			ContentTemplateRoot.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
-			AddSubview(ContentTemplateRoot);
+
+			contentTemplateRoot.Frame = Bounds;
+			contentTemplateRoot.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
+			AddSubview(contentTemplateRoot);
 		}
 
 		partial void UnregisterContentTemplateRoot()

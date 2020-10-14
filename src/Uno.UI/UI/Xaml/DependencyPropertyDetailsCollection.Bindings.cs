@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Uno.Collections;
@@ -39,7 +40,7 @@ namespace Windows.UI.Xaml
 		/// <summary>
 		/// Applies the specified datacontext on the current <see cref="Binding"/> instances
 		/// </summary>
-		public void ApplyDataContext(object dataContext)
+		public void ApplyDataContext(object? dataContext)
 		{
 			var bindings = _bindings.Data;
 
@@ -117,7 +118,7 @@ namespace Windows.UI.Xaml
 		/// Gets the DataContext <see cref="Binding"/> instance, if any
 		/// </summary>
 		/// <returns></returns>
-		internal BindingExpression FindDataContextBinding() => DataContextPropertyDetails.GetLastBinding();
+		internal BindingExpression? FindDataContextBinding() => DataContextPropertyDetails.GetLastBinding();
 
 		/// <summary>
 		/// Sets the specified <paramref name="binding"/> on the <paramref name="target"/> instance.
@@ -157,7 +158,7 @@ namespace Windows.UI.Xaml
 			}
 		}
 
-		private void ApplyBinding(BindingExpression binding, object dataContext)
+		private void ApplyBinding(BindingExpression binding, object? dataContext)
 		{
 			if (Equals(binding.ParentBinding.RelativeSource, RelativeSource.TemplatedParent))
 			{

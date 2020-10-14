@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Uno.Extensions;
@@ -42,12 +43,12 @@ namespace Windows.UI.Xaml.Controls
 	public partial class ContentPresenter : FrameworkElement, ICustomClippingElement
 	{
 		private bool _firstLoadResetDone;
-		private View _contentTemplateRoot;
+		private View? _contentTemplateRoot;
 
 		/// <summary>
 		/// Will be set to either the result of ContentTemplateSelector or to ContentTemplate, depending on which is used
 		/// </summary>
-		private DataTemplate _dataTemplateUsedLastUpdate;
+		private DataTemplate? _dataTemplateUsedLastUpdate;
 
 		private void InitializeContentPresenter()
 		{
@@ -69,7 +70,7 @@ namespace Windows.UI.Xaml.Controls
 
 		#region Content DependencyProperty
 
-		public virtual object Content
+		public virtual object? Content
 		{
 			get { return (object)GetValue(ContentProperty); }
 			set { SetValue(ContentProperty, value); }
@@ -144,9 +145,7 @@ namespace Windows.UI.Xaml.Controls
 
 		private static void OnContentTransitionsChanged(object dependencyObject, DependencyPropertyChangedEventArgs args)
 		{
-			var control = dependencyObject as ContentPresenter;
-
-			if (control != null)
+			if (dependencyObject is ContentPresenter control)
 			{
 				var oldValue = (TransitionCollection)args.OldValue;
 				var newValue = (TransitionCollection)args.NewValue;
@@ -550,12 +549,12 @@ namespace Windows.UI.Xaml.Controls
 
 		#endregion
 
-		protected virtual void OnForegroundColorChanged(Brush oldValue, Brush newValue)
+		protected virtual void OnForegroundColorChanged(Brush? oldValue, Brush? newValue)
 		{
 			OnForegroundColorChangedPartial(oldValue, newValue);
 		}
 
-		partial void OnForegroundColorChangedPartial(Brush oldValue, Brush newValue);
+		partial void OnForegroundColorChangedPartial(Brush? oldValue, Brush? newValue);
 
 		protected virtual void OnFontWeightChanged(FontWeight oldValue, FontWeight newValue)
 		{
@@ -564,12 +563,12 @@ namespace Windows.UI.Xaml.Controls
 
 		partial void OnFontWeightChangedPartial(FontWeight oldValue, FontWeight newValue);
 
-		protected virtual void OnFontFamilyChanged(FontFamily oldValue, FontFamily newValue)
+		protected virtual void OnFontFamilyChanged(FontFamily? oldValue, FontFamily? newValue)
 		{
 			OnFontFamilyChangedPartial(oldValue, newValue);
 		}
 
-		partial void OnFontFamilyChangedPartial(FontFamily oldValue, FontFamily newValue);
+		partial void OnFontFamilyChangedPartial(FontFamily? oldValue, FontFamily? newValue);
 
 		protected virtual void OnFontSizeChanged(double oldValue, double newValue)
 		{
@@ -608,21 +607,23 @@ namespace Windows.UI.Xaml.Controls
 			}
 		}
 
-		private void TrySetDataContextFromContent(object value)
+		private void TrySetDataContextFromContent(object? value)
 		{
-			if (value != null)
+			if (value == null)
 			{
-				if (!(value is View))
-				{
-					// If the content is not a view, we apply the content as the
-					// DataContext of the materialized content.
-					DataContext = value;
-				}
-				else
-				{
-					// Restore DataContext propagation if the content is a view
-					this.ClearValue(DataContextProperty, DependencyPropertyValuePrecedences.Local);
-				}
+				return;
+			}
+
+			if (!(value is View))
+			{
+				// If the content is not a view, we apply the content as the
+				// DataContext of the materialized content.
+				DataContext = value;
+			}
+			else
+			{
+				// Restore DataContext propagation if the content is a view
+				this.ClearValue(DataContextProperty, DependencyPropertyValuePrecedences.Local);
 			}
 		}
 
@@ -633,7 +634,7 @@ namespace Windows.UI.Xaml.Controls
 			SetImplicitContent();
 		}
 
-		protected virtual void OnContentTemplateChanged(DataTemplate oldTemplate, DataTemplate newTemplate)
+		protected virtual void OnContentTemplateChanged(DataTemplate? oldTemplate, DataTemplate? newTemplate)
 		{
 			if (ContentTemplateRoot != null)
 			{
@@ -643,13 +644,13 @@ namespace Windows.UI.Xaml.Controls
 			SetUpdateTemplate();
 		}
 
-		private void OnContentTemplateSelectorChanged(DataTemplateSelector dataTemplateSelector1, DataTemplateSelector dataTemplateSelector2)
+		private void OnContentTemplateSelectorChanged(DataTemplateSelector? dataTemplateSelector1, DataTemplateSelector? dataTemplateSelector2)
 		{
 		}
 
 		partial void UnregisterContentTemplateRoot();
 
-		public virtual View ContentTemplateRoot
+		public virtual View? ContentTemplateRoot
 		{
 			get
 			{
@@ -675,9 +676,9 @@ namespace Windows.UI.Xaml.Controls
 				SynchronizeVerticalContentAlignment();
 				SynchronizeHorizontalContentAlignment();
 
-				if (_contentTemplateRoot != null)
+				if (_contentTemplateRoot is {} tplRoot)
 				{
-					RegisterContentTemplateRoot();
+					RegisterContentTemplateRoot(tplRoot);
 
 					UpdateContentTransitions(null, this.ContentTransitions);
 				}
@@ -703,7 +704,7 @@ namespace Windows.UI.Xaml.Controls
 				{
 					binder.TemplatedParent = FindTemplatedParent();
 
-					DependencyObject FindTemplatedParent()
+					DependencyObject? FindTemplatedParent()
 					{
 						// ImplicitTextBlock is a special case that requires its TemplatedParent to be the ContentPresenter
 						if (_contentTemplateRoot is ImplicitTextBlock) return this;
@@ -727,28 +728,24 @@ namespace Windows.UI.Xaml.Controls
 			}
 		}
 
-		private void UpdateContentTransitions(TransitionCollection oldValue, TransitionCollection newValue)
+		private void UpdateContentTransitions(TransitionCollection? oldValue, TransitionCollection? newValue)
 		{
-			var contentRoot = this.ContentTemplateRoot as IFrameworkElement;
-
-			if (contentRoot == null)
+			if (ContentTemplateRoot is IFrameworkElement contentRoot)
 			{
-				return;
-			}
-
-			if (oldValue != null)
-			{
-				foreach (var item in oldValue)
+				if (oldValue != null)
 				{
-					item.DetachFromElement(contentRoot);
+					foreach (var item in oldValue)
+					{
+						item.DetachFromElement(contentRoot);
+					}
 				}
-			}
 
-			if (newValue != null)
-			{
-				foreach (var item in newValue)
+				if (newValue != null)
 				{
-					item.AttachToElement(contentRoot);
+					foreach (var item in newValue)
+					{
+						item.AttachToElement(contentRoot);
+					}
 				}
 			}
 		}
@@ -922,13 +919,11 @@ namespace Windows.UI.Xaml.Controls
 			}
 		}
 
-		partial void RegisterContentTemplateRoot();
+		partial void RegisterContentTemplateRoot(View contentTemplateRoot);
 
 		private void SynchronizeHorizontalContentAlignment(HorizontalAlignment? alignment = null)
 		{
-			var childControl = ContentTemplateRoot as FrameworkElement;
-
-			if (childControl != null)
+			if (ContentTemplateRoot is FrameworkElement childControl)
 			{
 				childControl.SetValue(
 					FrameworkElement.HorizontalAlignmentProperty,
@@ -938,13 +933,11 @@ namespace Windows.UI.Xaml.Controls
 			}
 			else
 			{
-				var childControl2 = ContentTemplateRoot as IFrameworkElement;
-
-				if (childControl2 != null)
+				if (ContentTemplateRoot is IFrameworkElement childControl2)
 				{
 					// This case is for controls that implement IFrameworkElement, but do not inherit from FrameworkElement (like TextBlock).
 
-					var horizontalAlignmentProperty = DependencyProperty.GetProperty(ContentTemplateRoot.GetType(), "HorizontalAlignment");
+					var horizontalAlignmentProperty = DependencyProperty.GetProperty(childControl2.GetType(), "HorizontalAlignment");
 
 					if (horizontalAlignmentProperty != null)
 					{
@@ -965,9 +958,7 @@ namespace Windows.UI.Xaml.Controls
 
 		private void SynchronizeVerticalContentAlignment(VerticalAlignment? alignment = null)
 		{
-			var childControl = ContentTemplateRoot as FrameworkElement;
-
-			if (childControl != null)
+			if (ContentTemplateRoot is FrameworkElement childControl)
 			{
 				childControl.SetValue(
 					FrameworkElement.VerticalAlignmentProperty,
@@ -977,13 +968,11 @@ namespace Windows.UI.Xaml.Controls
 			}
 			else
 			{
-				var childControl2 = ContentTemplateRoot as IFrameworkElement;
-
-				if (childControl2 != null)
+				if (ContentTemplateRoot is IFrameworkElement childControl2)
 				{
 					// This case is for controls that implement IFrameworkElement, but do not inherit from FrameworkElement (like TextBlock).
 
-					var verticalAlignmentProperty = DependencyProperty.GetProperty(ContentTemplateRoot.GetType(), "VerticalAlignment");
+					var verticalAlignmentProperty = DependencyProperty.GetProperty(childControl2.GetType(), "VerticalAlignment");
 
 					if (verticalAlignmentProperty != null)
 					{

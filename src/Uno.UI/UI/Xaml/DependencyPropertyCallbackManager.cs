@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -16,8 +17,8 @@ namespace Windows.UI.Xaml
     internal class DependencyPropertyCallbackManager : IDisposable
     {
         private readonly LinkedList<PropertyChangedCallback> _callbacks = new LinkedList<PropertyChangedCallback>();
-        private readonly static ArrayPool<PropertyChangedCallback> _pool = ArrayPool<PropertyChangedCallback>.Create(100, 100);
-        private PropertyChangedCallback[] _callbacksShadow;
+        private static readonly ArrayPool<PropertyChangedCallback> _pool = ArrayPool<PropertyChangedCallback>.Create(100, 100);
+        private PropertyChangedCallback[]? _callbacksShadow;
         private int _id;
 		private bool _disposed;
 
@@ -63,7 +64,7 @@ namespace Windows.UI.Xaml
 
             // Capture the current shadow list, as it may get updated by handlers
             // through the Invoke below.
-            var localShadow = _callbacksShadow;
+            var localShadow = _callbacksShadow!;
             var localCount = _callbacks.Count;
             var localId = _id;
 

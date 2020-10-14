@@ -244,7 +244,7 @@ namespace Uno.UI.DataBinding
 				{
 					var bindablePropertyDescriptor = BindablePropertyDescriptor.GetPropertByBindableMetadataProvider(type, property);
 
-					if (bindablePropertyDescriptor.OwnerType != null)
+					if (bindablePropertyDescriptor?.OwnerType != null)
 					{
 						if (IsIndexerFormat(property))
 						{
@@ -577,7 +577,7 @@ namespace Uno.UI.DataBinding
 				{
 					var bindableProperty = BindablePropertyDescriptor.GetPropertByBindableMetadataProvider(type, property);
 
-					if (bindableProperty.OwnerType != null)
+					if (bindableProperty?.OwnerType != null)
 					{
 						if (bindableProperty != null && bindableProperty.Property.Getter != null)
 						{
@@ -827,7 +827,7 @@ namespace Uno.UI.DataBinding
 				{
 					var bindableProperty = BindablePropertyDescriptor.GetPropertByBindableMetadataProvider(type, property);
 
-					if (bindableProperty.OwnerType != null)
+					if (bindableProperty?.OwnerType != null)
 					{
 						if (bindableProperty != null)
 						{
@@ -993,7 +993,7 @@ namespace Uno.UI.DataBinding
 			return delegate { once(); };
 		}
 
-		private static DependencyProperty FindDependencyProperty(Type ownerType, string property) 
+		private static DependencyProperty? FindDependencyProperty(Type ownerType, string property) 
 			=> DependencyProperty.GetProperty(ownerType, property);
 
 		private static DependencyProperty? FindAttachedProperty(Type type, string property)

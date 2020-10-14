@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Drawing;
 using Uno.Extensions;
 using Uno.UI;
@@ -18,7 +19,7 @@ namespace Windows.UI.Xaml.Controls
 	/// </remarks>
 	public partial class ContentPresenter
 	{
-		private BorderLayerRenderer _borderRenderer = new BorderLayerRenderer();
+		private readonly BorderLayerRenderer _borderRenderer = new BorderLayerRenderer();
 
 		public ContentPresenter()
 		{
@@ -33,24 +34,26 @@ namespace Windows.UI.Xaml.Controls
 			SetNeedsLayout();
 		}
 
-		partial void RegisterContentTemplateRoot()
+		partial void RegisterContentTemplateRoot(UIView contentTemplateRoot)
 		{
 			if (Subviews.Length != 0)
 			{
 				throw new Exception("A Xaml control may not contain more than one child.");
 			}
-			 
-			ContentTemplateRoot.Frame = Bounds;
-			ContentTemplateRoot.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
-			AddSubview(ContentTemplateRoot);
+
+			contentTemplateRoot.Frame = Bounds;
+			contentTemplateRoot.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+			AddSubview(contentTemplateRoot);
 		}
 
 		partial void UnregisterContentTemplateRoot()
 		{
 			// If Content is a view it may have already been set as Content somewhere else in certain scenarios, eg virtualizing collections
-			if (ContentTemplateRoot.Superview == this)
+			var contentTemplateRoot = ContentTemplateRoot;
+
+			if (ReferenceEquals(contentTemplateRoot?.Superview, this))
 			{
-				ContentTemplateRoot?.RemoveFromSuperview();
+				contentTemplateRoot.RemoveFromSuperview();
 			}
 		}
 

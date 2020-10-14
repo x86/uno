@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using Uno.Extensions;
 using Uno.Logging;
 
@@ -22,7 +23,7 @@ namespace Windows.UI.Xaml
 		/// </summary>
 		/// <param name="propertyPath">The property path</param>
 		/// <returns></returns>
-		internal static DependencyPropertyDescriptor Parse(string propertyPath)
+		internal static DependencyPropertyDescriptor? Parse(string propertyPath)
 		{
 			if (propertyPath.Contains(":"))
 			{
@@ -38,7 +39,7 @@ namespace Windows.UI.Xaml
 					if (propertyParts.Length == 2)
 					{
 						var typeName = propertyParts[0];
-						var propertyname = propertyParts[1];
+						var propertyName = propertyParts[1];
 
 						var qualifiedTypeName = ns + "." + typeName;
 
@@ -68,7 +69,7 @@ namespace Windows.UI.Xaml
 
 						if (type != null)
 						{
-							return new DependencyPropertyDescriptor(type, propertyname);
+							return new DependencyPropertyDescriptor(type, propertyName);
 						}
 					}
 					else

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,13 +17,13 @@ namespace Uno.UI.DataBinding
 		/// </summary>
 		/// <param name="type">The type to lookup</param>
 		/// <returns>A bindable type instance, otherwise null.</returns>
-		IBindableType GetBindableTypeByType(Type type);
+		IBindableType? GetBindableTypeByType(Type type);
 
 		/// <summary>
 		/// Allows to get a Bindable type definition through a string representing the full type name.
 		/// </summary>
 		/// <param name="fullName">The type to lookup</param>
 		/// <returns>A bindable type instance, otherwise null.</returns>
-		IBindableType GetBindableTypeByFullName(string fullName);
+		IBindableType? GetBindableTypeByFullName(string fullName);
 	}
 }

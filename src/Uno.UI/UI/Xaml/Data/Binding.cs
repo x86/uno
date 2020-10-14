@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
@@ -81,7 +82,7 @@ namespace Windows.UI.Xaml.Data
 		/// Gets or sets a parameter that can be used in the Converter logic.
 		/// </summary>
 		/// <value>The converter parameter.</value>
-		public object ConverterParameter { get; set; }
+		public object? ConverterParameter { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value that names the language to pass to any converter specified by the Converter property.
