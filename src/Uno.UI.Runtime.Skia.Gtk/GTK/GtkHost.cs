@@ -15,6 +15,9 @@ namespace Uno.UI.Runtime.Skia
 {
 	public class GtkHost : ISkiaHost
 	{
+		[ThreadStatic]
+		private static bool _isDispatcherThread = false;
+
 		private readonly string[] _args;
 		private readonly Func<WUX.Application> _appBuilder;
 		private static Gtk.Window _window;
@@ -37,6 +40,7 @@ namespace Uno.UI.Runtime.Skia
 			ApiExtensibility.Register(typeof(IApplicationExtension), o => new GtkApplicationExtension(o));
 			ApiExtensibility.Register(typeof(Windows.Graphics.Display.IDisplayInformationExtension), o => _displayInformationExtension ??= new GtkDisplayInformationExtension(o, _window));
 
+			_isDispatcherThread = true;
 			_window = new Gtk.Window("Uno Host");
 			_window.SetDefaultSize(1024, 800);
 			_window.SetPosition(Gtk.WindowPosition.Center);
@@ -72,6 +76,7 @@ namespace Uno.UI.Runtime.Skia
 					   return false;
 				   });
 			   };
+			Windows.UI.Core.CoreDispatcher.HasThreadAccessOverride = () => _isDispatcherThread;
 
 			_window.Realized += (s, e) =>
 			{
