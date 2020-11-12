@@ -46,14 +46,13 @@ namespace Windows.UI.Xaml.Controls
 					(Background as ImageBrush)?.ImageSource?.TryOpenSync(out backgroundImage);
 				}
 
-				BoundsPath = _borderRenderer.UpdateLayer(
-					this,
-					Background,
-					BorderThickness,
-					BorderBrush,
-					CornerRadius,
-					backgroundImage
-				);
+				
+				if (_borderRenderer.UpdateLayer(this, Background, BorderThickness, BorderBrush, CornerRadius, backgroundImage)
+					is CGPath updated && // UpdateLayer may return null if there is no update
+					!updated.PathBoundingBox.IsEmpty) // workaround for ElevatedView.SetElevationInternal timing issue
+				{
+					BoundsPath = updated;
+				}
 			}
 
 			this.SetNeedsDisplay();
