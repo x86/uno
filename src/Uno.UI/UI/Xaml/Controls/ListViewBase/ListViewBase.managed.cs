@@ -13,7 +13,7 @@ namespace Windows.UI.Xaml.Controls
 	{
 		IVirtualizingPanel VirtualizingPanel => ItemsPanelRoot as IVirtualizingPanel;
 
-		private int PageSize => throw new NotImplementedException();
+		private int PageSize => 0;
 
 		private protected override bool ShouldItemsControlManageChildren => !(ItemsPanelRoot is IVirtualizingPanel);
 
@@ -70,10 +70,7 @@ namespace Windows.UI.Xaml.Controls
 
 		private ContentControl ContainerFromGroupIndex(int groupIndex) => throw new NotImplementedException();
 
-		private void TryLoadMoreItems()
-		{
-			//TODO: ISupportIncrementalLoading
-		}
+		private void TryLoadMoreItems() => TryLoadMoreItems(NumberOfItems - 1);
 
 		partial void UpdateReordering(Point location, FrameworkElement draggedContainer, object draggedItem)
 		{
