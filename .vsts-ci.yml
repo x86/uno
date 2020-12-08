@@ -93,8 +93,8 @@ jobs:
     vmImage: '$(macOSVMImage)'
     xCodeRootBuild: '$(xCodeRoot)'
     XamarinSDKVersionBuild: '$(XamarinSDKVersion)'
-    xCodeRootTest: '$(xCodeRoot_iOS_UITests)'
-    XamarinSDKVersionTest: '$(XamarinSDKVersion_iOS_UITests)'
+    xCodeRootTest: '$(xCodeRoot)'
+    XamarinSDKVersionTest: '$(XamarinSDKVersion)'
 
 - template: build/ci/.azure-devops-screenshot-compare.yml
   parameters:
