@@ -20,6 +20,16 @@ namespace Windows.Foundation
 			Y = y;
 		}
 
+#if __ANDROID__
+		internal static Point From(Action<int[]> getter)
+		{
+			var result = new int[2];
+			getter(result);
+
+			return new Point(result[0], result[1]);
+		}
+#endif
+
 		internal static Point Zero => new Point(0, 0);
 
 		public double X { get; set; }
