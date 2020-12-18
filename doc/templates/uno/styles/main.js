@@ -22,22 +22,21 @@ document.addEventListener('DOMContentLoaded', function(){
             }
         });
     }
-
     // if local env, use toc.yml for main nav
     // else use wp menu
-    if (window.location.hostname !== 'localhost') {
-        const unoMenuReq = new XMLHttpRequest();
-        const unoMenuEndpoint = window.location.protocol + "//" + window.location.hostname + "/wp-json/wp/v2/menu";
-        unoMenuReq.open("get", unoMenuEndpoint, true);
+    // if (window.location.hostname !== 'localhost') {
 
-        if (typeof navbar !== 'undefined') {
+        const unoMenuReq = new XMLHttpRequest();
+        const unoMenuEndpoint = "https://platform.uno/wp-json/wp/v2/menu";
+        unoMenuReq.open("get", unoMenuEndpoint, true);
+    if (typeof navbar !== 'undefined') {
             unoMenuReq.onload = function (e) {
                 if (unoMenuReq.status === 200 && unoMenuReq.responseText)
                     document.getElementById("navbar").innerHTML = JSON.parse(unoMenuReq.responseText);
-            };
+                };
             unoMenuReq.send();
         }
-    }
+    // }
 
     document.addEventListener('click', function (e) {
         const t = e.target;
