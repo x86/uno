@@ -1,7 +1,9 @@
 <Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
 	<PropertyGroup>
-		<TargetFrameworks>xamarinmac20;net461;xamarinios10;MonoAndroid11.0;netstandard2.0;net5.0</TargetFrameworks>
-		<TargetFrameworksCI>net461;MonoAndroid11.0;MonoAndroid10.0;xamarinios10;netstandard2.0;xamarinmac20;net5.0</TargetFrameworksCI>
+		<TargetFrameworks>xamarinmac20;net461;xamarinios10;MonoAndroid11.0;netstandard2.0</TargetFrameworks>
+		<TargetFrameworksCI>net461;MonoAndroid11.0;MonoAndroid10.0;xamarinios10;netstandard2.0;xamarinmac20</TargetFrameworksCI>
+
+
 		<DisableBuildTargetFramework>true</DisableBuildTargetFramework>
 
 		<AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
@@ -11,6 +13,11 @@
 		<OutputPath>bin\$(Configuration)\$(TargetFramework)\</OutputPath>
 		<IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(MSBuildRuntimeType)'=='Core' or '$(MSBuildVersion)' &gt;= '16.8'">
+		<TargetFrameworks>$(TargetFrameworks);net5.0</TargetFrameworks>
+		<TargetFrameworksCI>$(TargetFrameworks);net5.0</TargetFrameworksCI>
 	</PropertyGroup>
 
 	<PropertyGroup>
