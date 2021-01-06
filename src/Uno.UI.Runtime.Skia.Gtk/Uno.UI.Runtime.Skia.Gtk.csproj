@@ -1,7 +1,12 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras">
 
 	<PropertyGroup>
-		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+		<TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(MSBuildRuntimeType)'=='Core' or '$(MSBuildVersion)' &gt;= '16.8'">
+		<TargetFrameworks>$(TargetFrameworks);net5.0</TargetFrameworks>
+		<TargetFrameworksCI>$(TargetFrameworks);net5.0</TargetFrameworksCI>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(UnoTargetFrameworkOverride)'!=''">
