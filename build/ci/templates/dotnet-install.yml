@@ -1,0 +1,7 @@
+steps:
+
+  - task: UseDotNet@2
+    displayName: 'Use .Net Core runtime 5.0.101'
+    inputs:
+      packageType: sdk
+      version: 5.0.101

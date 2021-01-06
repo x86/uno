@@ -24,6 +24,7 @@ jobs:
     displayName: Cache NuGet packages
     
   - template: templates/optimize-roslyn-mono.yml
+  - template: templates/dotnet-install.yml
 
   - bash: |
       sudo cert-sync /etc/ssl/certs/ca-certificates.crt
