@@ -25,7 +25,7 @@
 					x:Name="runButton"
 					Content="Run"
 					Click="OnRunTests" />
-				<TextBox x:Name="testFilter" PlaceholderText="Enter test filter here" Width="140" />
+				<TextBox x:Name="testFilter" PlaceholderText="Enter test filter here" Text="Leak" Width="140" />
 			</StackPanel>
 
 			<StackPanel Orientation="Horizontal">
