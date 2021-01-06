@@ -29,6 +29,7 @@ resources:
     image: unoplatform/wasm-build:3.0
 
 variables:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   windowsHostedVMImage: 'windows-2019'
   windowsScaledPool: 'Windows2019-20201210-0'
   linuxVMImage: 'ubuntu-latest'
