@@ -28,6 +28,8 @@ using Uno.Logging;
 using Windows.Graphics.Display;
 using System.Globalization;
 using Windows.UI.ViewManagement;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging.Console;
 #if HAS_UNO_WINUI
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 #else
@@ -302,12 +304,15 @@ namespace SamplesApp
 #if DEBUG
 
 #if __WASM__
-				//.AddConsole(LogLevel.Trace);
-				builder.AddProvider(new SamplesApp.Logger.WebAssemblyConsoleLoggerProvider());
+				builder.AddProvider(new Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
 #endif
 
 #else
-				builder.AddConsole(LogLevel.Warning);
+#if __WASM__
+				builder.AddProvider(new SamplesApp.Logger.WebAssemblyConsoleLoggerProvider());
+#else
+				builder.AddConsole();
+#endif
 #endif
 			});
 
