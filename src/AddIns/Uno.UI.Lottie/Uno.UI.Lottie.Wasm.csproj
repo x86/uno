@@ -20,7 +20,7 @@
 		<AssemblyName>Uno.UI.Lottie</AssemblyName>
 		<RootNamespace>Uno.UI.Lottie</RootNamespace>
 
-		<UnoRuntimeIdentifier Condition="'$(TargetFramework)'=='netstandard2.0'">WebAssembly</UnoRuntimeIdentifier>
+		<UnoRuntimeIdentifier>WebAssembly</UnoRuntimeIdentifier>
 		<PlatformItemsBasePath>.\</PlatformItemsBasePath>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
