@@ -17,9 +17,9 @@ jobs:
     clean: true
     
   - bash: |
-      msbuild /r /p:Configuration=Release /p:LangVersion=preview /p:UnoUIUseRoslynSourceGenerators=true /p:MicrosoftNetCompilerVersionOverride=3.8.0-3.final src/SamplesApp/SamplesApp.Wasm/SamplesApp.Wasm.csproj  /bl:$(build.artifactstagingdirectory)/build-cs9-preview-$(GitVersion.FullSemVer).binlog
+      msbuild /r /p:Configuration=Release /p:UnoTargetFrameworkOverride=netstandard2.0 /p:LangVersion=preview /p:UnoUIUseRoslynSourceGenerators=true /p:MicrosoftNetCompilerVersionOverride=3.8.0-3.final src/SamplesApp/SamplesApp.Wasm/SamplesApp.Wasm.csproj  /bl:$(build.artifactstagingdirectory)/build-cs9-preview-$(GitVersion.FullSemVer).binlog
 
-    displayName: 'Build sample app'
+    displayName: 'Build sample app (netstandard2.0)'
 
   - task: CopyFiles@2
     displayName: 'Publish Wasm Site'
