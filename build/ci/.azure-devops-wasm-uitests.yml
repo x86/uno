@@ -32,14 +32,14 @@ jobs:
     displayName: 'Update the SSL trusted certificates'
     
   - bash: |
-      dotnet msbuild /r /p:Configuration=Release src/SamplesApp/SamplesApp.Wasm/SamplesApp.Wasm.csproj
-
-    displayName: 'Build sample app (net5.0)'
-    
-  - bash: |
       msbuild /r /p:Configuration=Release src/SamplesApp/SamplesApp.Wasm/SamplesApp.Wasm.csproj /p:UnoTargetFrameworkOverride=netstandard2.0 /p:UnoSourceGeneratorUseGenerationHost=true /p:UnoSourceGeneratorUseGenerationController=false
 
     displayName: 'Build sample app (netstandard2.0)'
+    
+  - bash: |
+      dotnet msbuild /r /p:Configuration=Release src/SamplesApp/SamplesApp.Wasm/SamplesApp.Wasm.csproj
+
+    displayName: 'Build sample app (net5.0)'
 
   - task: CopyFiles@2
     displayName: 'Publish Wasm Site (netstandard2.0)'
