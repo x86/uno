@@ -32,17 +32,31 @@ jobs:
     displayName: 'Update the SSL trusted certificates'
     
   - bash: |
-      source /emsdk/emsdk_env.sh
-      msbuild /r /p:Configuration=Release src/SamplesApp/SamplesApp.Wasm/SamplesApp.Wasm.csproj /p:UnoSourceGeneratorUseGenerationHost=true /p:UnoSourceGeneratorUseGenerationController=false
+      msbuild /r /p:Configuration=Release src/SamplesApp/SamplesApp.Wasm/SamplesApp.Wasm.csproj /p:UnoTargetFrameworkOverride=netstandard2.0 /p:UnoSourceGeneratorUseGenerationHost=true /p:UnoSourceGeneratorUseGenerationController=false
 
-    displayName: 'Build sample app'
+    displayName: 'Build sample app (netstandard2.0)'
+    
+  - bash: |
+      dotnet msbuild /r /p:Configuration=Release src/SamplesApp/SamplesApp.Wasm/SamplesApp.Wasm.csproj /p:UnoSourceGeneratorUseGenerationHost=true /p:UnoSourceGeneratorUseGenerationController=false
+
+    displayName: 'Build sample app (net5.0)'
 
   - task: CopyFiles@2
-    displayName: 'Publish Wasm Site'
+    displayName: 'Publish Wasm Site (netstandard2.0)'
     inputs:
       SourceFolder: $(build.sourcesdirectory)/src/SamplesApp/SamplesApp.Wasm/bin/Release/netstandard2.0/dist
       Contents: '**/*.*'
-      TargetFolder: $(build.artifactstagingdirectory)/site
+      TargetFolder: $(build.artifactstagingdirectory)/site-netstandard2.0
+      CleanTargetFolder: false
+      OverWrite: false
+      flattenFolders: false
+
+  - task: CopyFiles@2
+    displayName: 'Publish Wasm Site (net5.0)'
+    inputs:
+      SourceFolder: $(build.sourcesdirectory)/src/SamplesApp/SamplesApp.Wasm/bin/Release/net5.0/dist
+      Contents: '**/*.*'
+      TargetFolder: $(build.artifactstagingdirectory)/site-net5.0
       CleanTargetFolder: false
       OverWrite: false
       flattenFolders: false

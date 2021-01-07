@@ -10,6 +10,10 @@
 		<UnoRuntimeIdentifier>WebAssembly</UnoRuntimeIdentifier>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(UnoTargetFrameworkOverride)'!=''">
+		<TargetFramework>$(UnoTargetFrameworkOverride)</TargetFramework>
+	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
 		<MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>
 		<DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
