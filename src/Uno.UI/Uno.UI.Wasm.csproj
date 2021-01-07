@@ -58,7 +58,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Uno.Core" />
-		<PackageReference Include="Microsoft.TypeScript.Compiler" />
 		<PackageReference Include="Microsoft.TypeScript.MSBuild" />
 		<PackageReference Include="Uno.SourceGenerationTasks" />
 		<PackageReference Include="Uno.Core.Build" />
